@@ -28,7 +28,7 @@ public class BloomEffect : MonoBehaviour {
 		RenderTextureFormat format = source.format;
 
 		RenderTexture currentDestination = textures[0] =
-			RenderTexture.GetTemporary(width, height, 0, format);
+		RenderTexture.GetTemporary(width, height, 0, format);
 		Graphics.Blit(source, currentDestination, bloom, BoxDownPass);
 		RenderTexture currentSource = currentDestination;
 

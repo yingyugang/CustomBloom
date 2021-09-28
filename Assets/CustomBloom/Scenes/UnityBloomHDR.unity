@@ -229,7 +229,7 @@ GameObject:
   m_Component:
   - component: {fileID: 678220839}
   - component: {fileID: 678220838}
-  m_Layer: 5
+  m_Layer: 6
   m_Name: GameObject
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -558,10 +558,10 @@ MonoBehaviour:
   volumeTrigger: {fileID: 1570733304}
   volumeLayer:
     serializedVersion: 2
-    m_Bits: 32
+    m_Bits: 118
   stopNaNPropagation: 1
   finalBlitToCameraTarget: 0
-  antialiasingMode: 0
+  antialiasingMode: 1
   temporalAntialiasing:
     jitterSpread: 0.75
     sharpness: 0.25
