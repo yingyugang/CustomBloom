@@ -8,7 +8,9 @@ namespace BlueNoah.ImageEffect
     {
 		const int BoxDownPass = 0;
 		const int BoxUpPass = 1;
-
+		const int ApplyBloomPass = 2;
+		[Range(0, 10)]
+		public float threshold = 1;
 		public Shader bloomShader;
 
 		[Range(1, 16)]
@@ -26,7 +28,7 @@ namespace BlueNoah.ImageEffect
 				bloom = new Material(bloomShader);
 				bloom.hideFlags = HideFlags.HideAndDontSave;
 			}
-
+			bloom.SetFloat("_Threshold", threshold);
 			int width = source.width / 2;
 			int height = source.height / 2;
 			RenderTextureFormat format = source.format;
@@ -60,7 +62,9 @@ namespace BlueNoah.ImageEffect
 				currentSource = currentDestination;
 			}
 
-			Graphics.Blit(currentSource, destination, bloom, BoxUpPass);
+			//Graphics.Blit(currentSource, destination, bloom, BoxUpPass);
+			bloom.SetTexture("_SourceTex", source);
+			Graphics.Blit(currentSource, destination, bloom, ApplyBloomPass);
 			RenderTexture.ReleaseTemporary(currentSource);
 		}
 	}

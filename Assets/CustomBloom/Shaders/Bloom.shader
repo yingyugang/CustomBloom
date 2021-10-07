@@ -5,7 +5,7 @@ Shader "BlueNoah/Bloom" {
 
 	CGINCLUDE
 	#include "UnityCG.cginc"
-	sampler2D _MainTex;
+	sampler2D _MainTex, _SourceTex;
 	float4 _MainTex_TexelSize;
 
 	struct VertexData {
@@ -38,31 +38,44 @@ Shader "BlueNoah/Bloom" {
 	}
 	ENDCG
 
-		SubShader{
-			Cull Off
-			ZTest Always
-			ZWrite Off
+	SubShader{
+		Cull Off
+		ZTest Always
+		ZWrite Off
 
-			Pass { // 0
-				CGPROGRAM
-					#pragma vertex VertexProgram
-					#pragma fragment FragmentProgram
+		Pass { // 0
+			CGPROGRAM
+				#pragma vertex VertexProgram
+				#pragma fragment FragmentProgram
 
-					half4 FragmentProgram(Interpolators i) : SV_Target {
-						return half4(SampleBox(i.uv, 1), 1);
-					}
-				ENDCG
-			}
+				half4 FragmentProgram(Interpolators i) : SV_Target {
+					return half4(SampleBox(i.uv, 1), 1);
+				}
+			ENDCG
+		}
 
-			Pass { // 1
-				CGPROGRAM
-					#pragma vertex VertexProgram
-					#pragma fragment FragmentProgram
+		Pass { // 1
+					Blend One One
+			CGPROGRAM
+				#pragma vertex VertexProgram
+				#pragma fragment FragmentProgram
 
-					half4 FragmentProgram(Interpolators i) : SV_Target {
-						return half4(SampleBox(i.uv, 0.5), 1);
-					}
-				ENDCG
-			}
+				half4 FragmentProgram(Interpolators i) : SV_Target {
+					return half4(SampleBox(i.uv, 0.5), 1);
+				}
+			ENDCG
+		}
+		Pass { // 2
+			CGPROGRAM
+				#pragma vertex VertexProgram
+				#pragma fragment FragmentProgram
+
+				half4 FragmentProgram(Interpolators i) : SV_Target {
+					half4 c = tex2D(_SourceTex, i.uv);
+					c.rgb += SampleBox(i.uv, 0.5);
+					return c;
+				}
+			ENDCG
+		}
 	}
 }
