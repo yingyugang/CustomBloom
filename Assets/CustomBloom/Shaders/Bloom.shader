@@ -7,7 +7,7 @@ Shader "BlueNoah/Bloom" {
 	#include "UnityCG.cginc"
 	sampler2D _MainTex, _SourceTex;
 	float4 _MainTex_TexelSize;
-
+	half _Threshold;
 	struct VertexData {
 		float4 vertex : POSITION;
 		float2 uv : TEXCOORD0;
@@ -24,7 +24,12 @@ Shader "BlueNoah/Bloom" {
 		i.uv = v.uv;
 		return i;
 	}
-
+	half3 Prefilter(half3 c) {
+		half brightness = max(c.r, max(c.g, c.b));
+		half contribution = max(0, brightness - _Threshold);
+		contribution /= max(brightness, 0.00001);
+		return c * contribution;
+	}
 	half3 Sample(float2 uv) {
 		return tex2D(_MainTex, uv).rgb;
 	}
@@ -42,8 +47,17 @@ Shader "BlueNoah/Bloom" {
 		Cull Off
 		ZTest Always
 		ZWrite Off
+			Pass { // 0
+			CGPROGRAM
+				#pragma vertex VertexProgram
+				#pragma fragment FragmentProgram
 
-		Pass { // 0
+				half4 FragmentProgram(Interpolators i) : SV_Target {
+					return half4(Prefilter(SampleBox(i.uv, 1)), 1);
+				}
+			ENDCG
+		}
+		Pass { // 1
 			CGPROGRAM
 				#pragma vertex VertexProgram
 				#pragma fragment FragmentProgram
@@ -54,7 +68,7 @@ Shader "BlueNoah/Bloom" {
 			ENDCG
 		}
 
-		Pass { // 1
+		Pass { // 2
 					Blend One One
 			CGPROGRAM
 				#pragma vertex VertexProgram

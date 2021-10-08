@@ -6,9 +6,10 @@ namespace BlueNoah.ImageEffect
     [ExecuteInEditMode, ImageEffectAllowedInSceneView]
     public class BloomCustom : MonoBehaviour
     {
-		const int BoxDownPass = 0;
-		const int BoxUpPass = 1;
-		const int ApplyBloomPass = 2;
+		const int BoxDownPrefilterPass = 0;
+		const int BoxDownPass = 1;
+		const int BoxUpPass = 2;
+		const int ApplyBloomPass = 3;
 		[Range(0, 10)]
 		public float threshold = 1;
 		public Shader bloomShader;
@@ -32,10 +33,9 @@ namespace BlueNoah.ImageEffect
 			int width = source.width / 2;
 			int height = source.height / 2;
 			RenderTextureFormat format = source.format;
-
 			RenderTexture currentDestination = textures[0] =
 			RenderTexture.GetTemporary(width, height, 0, format);
-			Graphics.Blit(source, currentDestination, bloom, BoxDownPass);
+			Graphics.Blit(source, currentDestination, bloom, BoxDownPrefilterPass);
 			RenderTexture currentSource = currentDestination;
 
 			int i = 1;
